@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\Visitor\DashboardController as VisitorDashboard;
+use App\Http\Controllers\PublicCheckinController;
 use App\Http\Controllers\User\EventBrowseController;
 use App\Http\Controllers\User\ReservationController;
 use App\Http\Controllers\Admin\EventController;
@@ -43,18 +44,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:visitor'])->prefix('visitor')->name('visitor.')->group(function () {
     Route::get('/dashboard', fn() => view('visitor.dashboard'))->name('dashboard');
 
-    Route::get('/events', [EventBrowseController::class, 'index'])->name('events.index');
+    Route::get('/events', action: [EventBrowseController::class, 'index'])->name('events.index');
 
     Route::post('/events/{event}/reserve', [ReservationController::class, 'store'])->name('events.reserve');
 
     Route::get('/my-ticket', [ReservationController::class, 'myTicket'])->name('tickets.my');
 });
 
+Route::post('/checkin', [PublicCheckinController::class, 'process'])->name('checkin.public');
+
 Route::post('/checkin/{reservation}/mark', function (Reservation $reservation) {
     $reservation->update(['is_checked_in' => true]);
 
-    return redirect()->route('admin.checkin.form')->with('success', 'Ticket has been checked-in!');
-})->middleware(['auth', 'role:admin'])->name('checkin.mark');
+    return redirect()->back()->with('success', 'Ticket has been checked-in!');
+})->name('checkin.mark');
 
 
 require __DIR__ . '/auth.php';

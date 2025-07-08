@@ -45,6 +45,38 @@
                         </a>
                     @endif
                 @endauth
+                <form method="POST" action="{{ route('checkin.public') }}" class="mt-6 space-y-3">
+                    @csrf
+
+                    <label for="ticket_code" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Enter Your Ticket Code
+                    </label>
+                    <input type="text" id="ticket_code" name="ticket_code"
+                        class="w-full p-2 border rounded text-gray-900" required>
+
+                    <button type="submit"
+                        class="w-full mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                        Check-in
+                    </button>
+                </form>
+                @if (session('success'))
+                    <div class="mt-4 text-green-700 bg-green-100 p-3 rounded">
+                        <p>{{ session('success') }}</p>
+
+                        @if (session('ticket_code'))
+                            <p class="font-semibold mt-2">Your Ticket Code: {{ session('ticket_code') }}</p>
+                        @endif
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mt-4 text-red-700 bg-red-100 p-3 rounded">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+
+
             </div>
         </div>
     </div>
